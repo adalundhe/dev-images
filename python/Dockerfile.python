@@ -22,4 +22,5 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | g
     apt update && apt install -y gh;
 
 RUN pip install --index-url ${INDEX_URL} \
-     poetry awscli pytest playwright pytest-cov
+     poetry awscli pytest playwright \
+      pytest-cov pydantic
