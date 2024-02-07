@@ -37,6 +37,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         push: true
+        file: python/Dockerfile.python
         tags: corpheus91/devcontainers:python-${{matrix.version}}-$IMAGE_OS
         build-args: |
           VERSION=${{matrix.version}}
