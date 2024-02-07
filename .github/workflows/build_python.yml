@@ -38,7 +38,7 @@ jobs:
       with:
         push: true
         file: python/Dockerfile.python
-        tags: corpheus91/devcontainers:python-${{matrix.version}}-$IMAGE_OS
+        tags: corpheus91/devcontainers:python-${{matrix.version}}-${{env.IMAGE_OS}}
         build-args: |
           VERSION=${{matrix.version}}
           BASE=$IMAGE_OS
