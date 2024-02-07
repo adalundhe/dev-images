@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         python_versions: ["3.10", "3.11", "3.12"]
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     env:
       IMAGE_OS: "bookworm"
     steps:
