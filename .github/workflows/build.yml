@@ -97,3 +97,4 @@ jobs:
         tags: corpheus91/devcontainers:golang-${{matrix.golang_version}}-${{env.IMAGE_OS}}
         build-args: |
           VERSION=${{matrix.golang_version}}
+          BASE=${{env.IMAGE_OS}}
