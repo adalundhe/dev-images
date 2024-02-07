@@ -18,7 +18,7 @@ jobs:
   build_core_python:
     strategy:
       matrix:
-        python_versions: ["3.10", "3.11", "3.12"]
+        python_version: ["3.10", "3.11", "3.12"]
     runs-on: ubuntu-latest
     env:
       IMAGE_OS: "bookworm"
@@ -38,7 +38,7 @@ jobs:
       with:
         push: true
         file: python/Dockerfile.python
-        tags: corpheus91/devcontainers:python-${{matrix.version}}-${{env.IMAGE_OS}}
+        tags: corpheus91/devcontainers:python-${{matrix.python_version}}-${{env.IMAGE_OS}}
         build-args: |
-          VERSION=${{matrix.version}}
-          BASE=$IMAGE_OS
+          VERSION=${{matrix.python_version}}
+          BASE=${{env.IMAGE_OS}}
