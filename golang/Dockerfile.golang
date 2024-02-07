@@ -1,0 +1,8 @@
+ARG VERSION
+
+FROM golang:${VERSION}-alpine
+
+RUN apk update && \
+    apk upgrade && \
+    apk add sudo curl git \
+    github-cli aws-cli just
