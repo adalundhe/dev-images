@@ -1,7 +1,7 @@
 ARG VERSION
 ARG BASE
 
-FROM golang:${VERSION}-${BASE}-slim
+FROM golang:${VERSION}-${BASE}
 
 RUN apt update -y && apt install -y \
     sudo curl git build-essential gpg
