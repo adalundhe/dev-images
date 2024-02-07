@@ -36,6 +36,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
+        platforms: linux/amd64,linux/arm64
         push: true
         file: python/Dockerfile.python
         tags: corpheus91/devcontainers:python-${{matrix.python_version}}-${{env.IMAGE_OS}}
@@ -64,6 +65,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
+        platforms: linux/amd64,linux/arm64
         push: true
         file: node/Dockerfile.node
         tags: corpheus91/devcontainers:node-${{matrix.node_version}}-${{env.IMAGE_OS}}
@@ -92,6 +94,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
+        platforms: linux/amd64,linux/arm64
         push: true
         file: golang/Dockerfile.golang
         tags: corpheus91/devcontainers:golang-${{matrix.golang_version}}-${{env.IMAGE_OS}}
