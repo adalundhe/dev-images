@@ -1,8 +1,32 @@
 ARG VERSION
 
 FROM golang:${VERSION}-alpine
+ARG INDEX_URL="https://pypi.org/simple"
+ARG AWSCLI_VERSION="2.15.15"
 
 RUN apk update && \
     apk upgrade && \
     apk add sudo curl git \
-    github-cli aws-cli just
+    github-cli just
+
+RUN apk add --no-cache \
+  groff \
+  less \
+  mailcap \
+  build-base \
+  libffi-dev \
+  cmake \
+  openssl-dev \
+  python3-dev
+
+RUN git clone --single-branch --depth 1 -b "${AWSCLI_VERSION}" https://github.com/aws/aws-cli.git && \
+  ./aws-cli/configure --with-install-type=portable-exe --with-download-deps && \
+  make && \
+  make install && \
+  rm -rf /aws-cli \
+  && rm -rf \
+    /usr/local/lib/aws-cli/aws_completer \
+    /usr/local/lib/aws-cli/awscli/data/ac.index \
+    /usr/local/lib/aws-cli/awscli/examples \
+    && find /usr/local/lib/aws-cli/awscli/data -name "completions-1*.json" -delete && \
+    find /usr/local/lib/aws-cli/awscli/botocore/data -name examples-1.json -delete
