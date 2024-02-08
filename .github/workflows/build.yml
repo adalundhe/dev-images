@@ -140,7 +140,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          file: kubernetes/Dockerfle.kubernetes
+          file: kubernetes/Dockerfile.kubernetes
           tags: corpheus91/devcontainers:${{matrix.language_and_version}}-kubernetes
           build-args: |
             IMAGE=${{env.REGISTRY}}:${{matrix.language_and_version}}-${{env.IMAGE_OS}}
