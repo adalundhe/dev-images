@@ -2,7 +2,9 @@
 ARG IMAGE
 FROM ${IMAGE}
 # Enable new "BUILDKIT" mode for Docker CLI
-ENV DOCKER_BUILDKIT=1
+ENV DOCKER_BUILDKIT=1 \
+    PATH=$PATH:/usr/local/go/bin \
+    TERM=xterm-256color
 
 # Options
 ARG INSTALL_ZSH="true"
@@ -33,5 +35,13 @@ ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD ["sleep", "infinity" ]
 
 # [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+RUN apt update \
+    && apt -y install --no-install-recommends kubectx make wget
+
+RUN wget https://golang.org/dl/go1.22.0.linux-amd64.tar.gz \
+    && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
+
+RUN git clone https://github.com/derailed/k9s.git \
+    && cd k9s \
+    && make build \
+    && mv ./execs/k9s /usr/local/bin
