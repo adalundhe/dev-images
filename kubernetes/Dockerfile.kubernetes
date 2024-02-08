@@ -28,20 +28,16 @@ COPY kubernetes/copy-kube-config.sh /usr/local/share/
 RUN chown ${USERNAME}:root /usr/local/share/copy-kube-config.sh \
     && echo "source /usr/local/share/copy-kube-config.sh" | tee -a /root/.bashrc /root/.zshrc /home/${USERNAME}/.bashrc >> /home/${USERNAME}/.zshrc
 
+# [Optional] Uncomment this section to install additional OS packages.
+RUN apt update \
+    && apt -y install --no-install-recommends kubectx make wget
+
+COPY kubernetes/install_k9s.sh ./install_k9s.sh
+
+RUN /bin/bash install_k9s.sh
+
 # Setting the ENTRYPOINT to docker-init.sh will configure non-root access to 
 # the Docker socket if "overrideCommand": false is set in devcontainer.json. 
 # The script will also execute CMD if you need to alter startup behaviors.
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD ["sleep", "infinity" ]
-
-# [Optional] Uncomment this section to install additional OS packages.
-RUN apt update \
-    && apt -y install --no-install-recommends kubectx make wget
-
-RUN wget https://golang.org/dl/go1.22.0.linux-amd64.tar.gz \
-    && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-
-RUN git clone https://github.com/derailed/k9s.git \
-    && cd k9s \
-    && make build \
-    && mv ./execs/k9s /usr/local/bin
