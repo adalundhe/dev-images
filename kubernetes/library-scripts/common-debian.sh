@@ -13,8 +13,6 @@ set -e
 
 INSTALL_ZSH=${1:-"true"}
 USERNAME=${2:-"automatic"}
-USER_UID=${3:-"automatic"}
-USER_GID=${4:-"automatic"}
 UPGRADE_PACKAGES=${5:-"true"}
 INSTALL_OH_MYS=${6:-"true"}
 ADD_NON_FREE_PACKAGES=${7:-"false"}
@@ -30,25 +28,6 @@ fi
 rm -f /etc/profile.d/00-restore-env.sh
 echo "export PATH=${PATH//$(sh -lc 'echo $PATH')/\$PATH}" > /etc/profile.d/00-restore-env.sh
 chmod +x /etc/profile.d/00-restore-env.sh
-
-# If in automatic mode, determine if a user already exists, if not use vscode
-if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
-    USERNAME=""
-    POSSIBLE_USERS=("vscode" "node" "codespace" "$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)")
-    for CURRENT_USER in ${POSSIBLE_USERS[@]}; do
-        if id -u ${CURRENT_USER} > /dev/null 2>&1; then
-            USERNAME=${CURRENT_USER}
-            break
-        fi
-    done
-    if [ "${USERNAME}" = "" ]; then
-        USERNAME=vscode
-    fi
-elif [ "${USERNAME}" = "none" ]; then
-    USERNAME=root
-    USER_UID=0
-    USER_GID=0
-fi
 
 # Load markers to see which steps have already run
 if [ -f "${MARKER_FILE}" ]; then
@@ -177,39 +156,6 @@ if [ "${LOCALE_ALREADY_SET}" != "true" ] && ! grep -o -E '^\s*en_US.UTF-8\s+UTF-
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
     locale-gen
     LOCALE_ALREADY_SET="true"
-fi
-
-# Create or update a non-root user to match UID/GID.
-group_name="${USERNAME}"
-if id -u ${USERNAME} > /dev/null 2>&1; then
-    # User exists, update if needed
-    if [ "${USER_GID}" != "automatic" ] && [ "$USER_GID" != "$(id -g $USERNAME)" ]; then 
-        group_name="$(id -gn $USERNAME)"
-        groupmod --gid $USER_GID ${group_name}
-        usermod --gid $USER_GID $USERNAME
-    fi
-    if [ "${USER_UID}" != "automatic" ] && [ "$USER_UID" != "$(id -u $USERNAME)" ]; then 
-        usermod --uid $USER_UID $USERNAME
-    fi
-else
-    # Create user
-    if [ "${USER_GID}" = "automatic" ]; then
-        groupadd $USERNAME
-    else
-        groupadd --gid $USER_GID $USERNAME
-    fi
-    if [ "${USER_UID}" = "automatic" ]; then 
-        useradd -s /bin/bash --gid $USERNAME -m $USERNAME
-    else
-        useradd -s /bin/bash --uid $USER_UID --gid $USERNAME -m $USERNAME
-    fi
-fi
-
-# Add sudo support for non-root user
-if [ "${USERNAME}" != "root" ] && [ "${EXISTING_NON_ROOT_USER}" != "${USERNAME}" ]; then
-    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
-    chmod 0440 /etc/sudoers.d/$USERNAME
-    EXISTING_NON_ROOT_USER="${USERNAME}"
 fi
 
 # ** Shell customization section **
