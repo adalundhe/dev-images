@@ -27,11 +27,11 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | g
 RUN pip install --index-url ${INDEX_URL} \
      poetry pytest playwright \
       pytest-cov pydantic
-      
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    ./aws/install
-    
+
+COPY resources/install_awscli.sh ./install_awscli.sh
+RUN bash install_awscli.sh && \
+    rm -rf install_awscli.sh
+
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     #
