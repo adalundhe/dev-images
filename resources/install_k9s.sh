@@ -49,7 +49,7 @@ if [[ ! -e /usr/local/go/bin ]]; then
     rm -rf /usr/local/go
 else
     wget "https://github.com/derailed/k9s/releases/download/v0.31.8/k9s_linux_$architecture.deb"
-    dpkg -i "k9s_linux_$architecture.deb" \
+    dpkg -i "k9s_linux_$architecture.deb"
     rm -rf "k9s_linux_$architecture.deb"
 fi
 
