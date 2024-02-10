@@ -21,13 +21,12 @@ RUN apt-get clean \
     && chown ${USERNAME}:root /usr/local/share/copy-kube-config.sh \
     && echo "source /usr/local/share/copy-kube-config.sh" | tee -a /root/.bashrc /root/.zshrc /home/${USERNAME}/.bashrc >> /home/${USERNAME}/.zshrc \
     && apt update \
-    && apt -y install --no-install-recommends kubectx make wget \
+    && apt -y install kubectx make wget \
     && /bin/bash /usr/local/share/install_k9s.sh \
     && rm -rf /usr/local/share/common_debian.sh \
     && rm -rf /usr/local/share/docker-debian.sh \
     && rm -rf /usr/local/share/kubectl-helm-debian.sh \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
-
 
 # Setting the ENTRYPOINT to docker-init.sh will configure non-root access to 
 # the Docker socket if "overrideCommand": false is set in devcontainer.json. 
