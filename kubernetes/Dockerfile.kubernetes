@@ -15,9 +15,9 @@ ARG USERNAME=vscode
 COPY kubernetes/library-scripts/*.sh /tmp/library-scripts/
 
 RUN mkdir -p /etc/apt
-COPY kubernetes/sources.list /etc/apt/sources.list
+COPY resources/sources.list /etc/apt/sources.list
 
-RUN apt-get update && /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${UPGRADE_PACKAGES}" "true" "true" \
+RUN apt-get update && /bin/bash /tmp/library-scripts/common-debian.sh "true" "${USERNAME}" "${UPGRADE_PACKAGES}" "true" "true" \
     && /bin/bash /tmp/library-scripts/docker-debian.sh "true" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" "${USE_MOBY}" \
     && /bin/bash /tmp/library-scripts/kubectl-helm-debian.sh "latest" "latest" "none" \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
