@@ -47,6 +47,8 @@ apt_get_update_if_needed()
         apt-get clean
         apt-get update
     else
+        apt-get clean
+        apt-get update
         echo "Skipping apt-get update."
     fi
 }
