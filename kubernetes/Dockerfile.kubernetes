@@ -12,7 +12,7 @@ ARG UPGRADE_PACKAGES="false"
 ARG USE_MOBY="true"
 ARG USERNAME=vscode
 # Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
-COPY kubernetes/library-scripts/*.sh /tmp/library-scripts/
+COPY resources/library-scripts/*.sh /tmp/library-scripts/
 
 RUN apt-get clean \
     && apt-get update \
