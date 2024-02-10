@@ -39,14 +39,13 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 COPY resources/*.sh /tmp/library-scripts/
 
-RUN apt update && bash /tmp/library-scripts/common_debian.sh "true" "${USERNAME}" "${USER_UID}" "${USER_GID}" "true" "true" "true" \
-    && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update \
+RUN apt clean \
+     && apt update \
+     && bash /tmp/library-scripts/common_debian.sh "true" "${USERNAME}" "${USER_UID}" "${USER_GID}" "true" "true" "true" \
     && /bin/bash /tmp/library-scripts/docker-debian.sh "true" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" "${USE_MOBY}" \
     && /bin/bash /tmp/library-scripts/kubectl-helm-debian.sh "latest" "latest" "none" \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
-
+    
 # Script copies localhost's ~/.kube/config file into the container and swaps out 
 # localhost for host.docker.internal on bash/zsh start to keep them in sync.
 COPY resources/copy-kube-config.sh /usr/local/share/
