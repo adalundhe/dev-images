@@ -10,7 +10,9 @@ fi
 git clone https://github.com/derailed/k9s.git \
     && cd k9s \
     && make build \
-    && mv ./execs/k9s /usr/local/bin
+    && mv ./execs/k9s /usr/local/bin \
+    && cd .. \
+    && rm -rf k9s
 
 # If the tar exists we should remove it and the extra installed go.
 if [[ -e go1.22.0.linux-amd64.tar.gz ]]; then
