@@ -30,7 +30,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 COPY resources/common_debian.sh /tmp/common_debian.sh
-COPY resources/sources.list /etc/apt/sources.list
 
 RUN apt update && bash /tmp/common_debian.sh "true" "${USERNAME}" "${USER_UID}" "${USER_GID}" "true" "true" "true" \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
