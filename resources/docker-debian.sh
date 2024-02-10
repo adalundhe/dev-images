@@ -128,27 +128,16 @@ fi
 architecture="$(dpkg --print-architecture)"
 
 # Check if distro is suppported
-if [ "${USE_MOBY}" = "true" ]; then
-    # 'get_common_setting' allows attribute to be updated remotely
-    get_common_setting DOCKER_MOBY_ARCHIVE_VERSION_CODENAMES
-    if [[ "${DOCKER_MOBY_ARCHIVE_VERSION_CODENAMES}" != *"${VERSION_CODENAME}"* ]]; then
-        err "Unsupported  distribution version '${VERSION_CODENAME}'. To resolve, either: (1) set feature option '\"moby\": false' , or (2) choose a compatible OS distribution"
-        err "Support distributions include:  ${DOCKER_MOBY_ARCHIVE_VERSION_CODENAMES}"
-        exit 1
-    fi
-    echo "Distro codename  '${VERSION_CODENAME}'  matched filter  '${DOCKER_MOBY_ARCHIVE_VERSION_CODENAMES}'"
-else
-    get_common_setting DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES
-    if [[ "${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}" != *"${VERSION_CODENAME}"* ]]; then
-        err "Unsupported distribution version '${VERSION_CODENAME}'. To resolve, please choose a compatible OS distribution"
-        err "Support distributions include:  ${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}"
-        exit 1
-    fi
-    echo "Distro codename  '${VERSION_CODENAME}'  matched filter  '${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}'"
+get_common_setting DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES
+if [[ "${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}" != *"${VERSION_CODENAME}"* ]]; then
+    err "Unsupported distribution version '${VERSION_CODENAME}'. To resolve, please choose a compatible OS distribution"
+    err "Support distributions include:  ${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}"
+    exit 1
 fi
+echo "Distro codename  '${VERSION_CODENAME}'  matched filter  '${DOCKER_LICENSED_ARCHIVE_VERSION_CODENAMES}'"
 
 # Set up the necessary apt repos (either Microsoft's or Docker's)
- # Name of proprietary engine package
+# Name of proprietary engine package
 cli_package_name="docker-ce-cli"
 
 # Import key safely and import Docker apt repo
@@ -183,15 +172,25 @@ fi
 if type docker > /dev/null 2>&1; then
     echo "Docker / Moby CLI already installed."
 else
-    apt-get -y install --no-install-recommends docker-ce-cli
+    apt-get -y install --no-install-recommends docker-ce-cli${cli_version_suffix}
     apt-get -y install --no-install-recommends docker-compose-plugin || echo "(*) Package docker-compose-plugin (Docker Compose v2) not available for OS ${ID} ${VERSION_CODENAME} (${architecture}). Skipping."
 fi
 
-apt update -y && \
-apt install -y curl sudo
-
-sudo sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
-sudo chmod +x /usr/local/bin/docker-compose
+# Install Docker Compose if not already installed  and is on a supported architecture
+if type docker-compose > /dev/null 2>&1; then
+    echo "Docker Compose already installed."
+else
+    TARGET_COMPOSE_ARCH="$(uname -m)"
+    if [ "${TARGET_COMPOSE_ARCH}" = "amd64" ]; then
+        TARGET_COMPOSE_ARCH="x86_64"
+    fi
+    
+    compose_v1_version="1"
+    find_version_from_git_tags compose_v1_version "https://github.com/docker/compose" "tags/"
+    echo "(*) Installing docker-compose ${compose_v1_version}..."
+    curl -fsSL "https://github.com/docker/compose/releases/download/${compose_v1_version}/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+fi
 
 # Install docker-compose switch if not already installed - https://github.com/docker/compose-switch#manual-installation
 current_v1_compose_path="$(which docker-compose)"
