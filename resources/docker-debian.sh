@@ -148,22 +148,12 @@ else
 fi
 
 # Set up the necessary apt repos (either Microsoft's or Docker's)
-if [ "${USE_MOBY}" = "true" ]; then
+ # Name of proprietary engine package
+cli_package_name="docker-ce-cli"
 
-    cli_package_name="moby-cli"
-
-    # Import key safely and import Microsoft apt repo
-    get_common_setting MICROSOFT_GPG_KEYS_URI
-    curl -sSL ${MICROSOFT_GPG_KEYS_URI} | gpg --dearmor > /usr/share/keyrings/microsoft-archive-keyring.gpg
-    echo "deb [arch=${architecture} signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/microsoft-${ID}-${VERSION_CODENAME}-prod ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/microsoft.list
-else
-    # Name of proprietary engine package
-    cli_package_name="docker-ce-cli"
-
-    # Import key safely and import Docker apt repo
-    curl -fsSL https://download.docker.com/linux/${ID}/gpg | gpg --dearmor > /usr/share/keyrings/docker-archive-keyring.gpg
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/${ID} ${VERSION_CODENAME} stable" > /etc/apt/sources.list.d/docker.list
-fi
+# Import key safely and import Docker apt repo
+curl -fsSL https://download.docker.com/linux/${ID}/gpg | gpg --dearmor > /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/${ID} ${VERSION_CODENAME} stable" > /etc/apt/sources.list.d/docker.list
 
 # Refresh apt lists
 apt-get update
