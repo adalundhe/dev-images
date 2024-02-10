@@ -7,6 +7,10 @@ ARG USERNAME=vscode
 ARG USER_UID=5000
 ARG USER_GID=$USER_UID
 
+ENV DOCKER_BUILDKIT=1 \
+    PATH=$PATH:/usr/local/go/bin \
+    TERM=xterm-256color
+
 
 RUN apt update -y && apt install -y \
     sudo curl git build-essential gpg

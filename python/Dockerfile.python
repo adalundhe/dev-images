@@ -12,7 +12,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR='/tmp/poetry_cache'
+    POETRY_CACHE_DIR='/tmp/poetry_cache' \
+    DOCKER_BUILDKIT=1 \
+    PATH=$PATH:/usr/local/go/bin \
+    TERM=xterm-256color
 
 RUN apt update -y && apt install -y \
     sudo curl git build-essential gpg
