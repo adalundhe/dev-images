@@ -115,7 +115,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
         init-system-helpers"
         
     # Needed for adding manpages-posix and manpages-posix-dev which are non-free packages in Debian
-    ap-get update
+    apt-get update
 
     # Install libssl1.1 if available
     if [[ ! -z $(apt-cache --names-only search ^libssl1.1$) ]]; then
