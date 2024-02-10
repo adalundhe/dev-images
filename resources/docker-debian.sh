@@ -194,10 +194,10 @@ if type docker > /dev/null 2>&1; then
     echo "Docker / Moby CLI already installed."
 else
     if [ "${USE_MOBY}" = "true" ]; then
-        apt-get -y install --no-install-recommends moby-cli${cli_version_suffix} moby-buildx
+        apt-get -y install --no-install-recommends moby-cli moby-buildx
         apt-get -y install --no-install-recommends moby-compose || echo "(*) Package moby-compose (Docker Compose v2) not available for OS ${ID} ${VERSION_CODENAME} (${architecture}). Skipping."
     else
-        apt-get -y install --no-install-recommends docker-ce-cli${cli_version_suffix}
+        apt-get -y install --no-install-recommends docker-ce-cli
         apt-get -y install --no-install-recommends docker-compose-plugin || echo "(*) Package docker-compose-plugin (Docker Compose v2) not available for OS ${ID} ${VERSION_CODENAME} (${architecture}). Skipping."
     fi
 fi
