@@ -4,8 +4,7 @@ set -e
 
 if [[ ! -e /usr/local/go/bin ]]; then
     wget https://golang.org/dl/go1.22.0.linux-amd64.tar.gz \
-    && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz && \
-
+    && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
 fi
 
 git clone https://github.com/derailed/k9s.git \
