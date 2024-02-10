@@ -6,10 +6,6 @@ ARG USERNAME=vscode
 ARG USER_UID=5000
 ARG USER_GID=$USER_UID
 
-ENV DOCKER_BUILDKIT=1 \
-    PATH=$PATH:/usr/local/go/bin \
-    TERM=xterm-256color
-
 RUN apt update -y && apt install -y \
     sudo curl git build-essential gpg
 
@@ -33,31 +29,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-COPY resources/*.sh /tmp/library-scripts/
+COPY resources/common_debian.sh /tmp/library-scripts/common_debian.sh
 
 RUN apt clean \
     && apt update \
     && bash /tmp/library-scripts/common_debian.sh "true" "${USERNAME}" "${USER_UID}" "${USER_GID}" "true" "true" "true" \
-    && /bin/bash /tmp/library-scripts/docker-debian.sh "true" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" "true" \
-    && /bin/bash /tmp/library-scripts/kubectl-helm-debian.sh "latest" "latest" "none" \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
-
-# Script copies localhost's ~/.kube/config file into the container and swaps out 
-# localhost for host.docker.internal on bash/zsh start to keep them in sync.
-COPY resources/copy-kube-config.sh /usr/local/share/
-RUN chown ${USERNAME}:root /usr/local/share/copy-kube-config.sh \
-    && echo "source /usr/local/share/copy-kube-config.sh" | tee -a /root/.bashrc /root/.zshrc /home/${USERNAME}/.bashrc >> /home/${USERNAME}/.zshrc
-
-# [Optional] Uncomment this section to install additional OS packages.
-RUN apt update \
-    && apt -y install --no-install-recommends kubectx make wget
-
-COPY resources/install_k9s.sh ./install_k9s.sh
-
-RUN /bin/bash install_k9s.sh
-
-# Setting the ENTRYPOINT to docker-init.sh will configure non-root access to 
-# the Docker socket if "overrideCommand": false is set in devcontainer.json. 
-# The script will also execute CMD if you need to alter startup behaviors.
-ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
-CMD ["sleep", "infinity" ]
