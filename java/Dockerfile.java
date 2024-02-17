@@ -1,14 +1,27 @@
-ARG VERSION
 ARG BASE
 
-FROM node:${VERSION}-${BASE}-slim
-ARG REGISTRY_URL="https://registry.npmjs.org"
+FROM debian:${BASE}-slim
+ARG VERSION
+ARG JAVA_VARIANT=open
 ARG USERNAME=vscode
 ARG USER_UID=5000
 ARG USER_GID=$USER_UID
 
-RUN apt update -y && apt install -y \
-    sudo curl git build-essential gpg
+RUN apt update && apt install -y \
+    sudo \
+    curl \
+    git \
+    gpg \
+    unzip \
+    zip \
+    maven
+
+RUN curl -s "https://get.sdkman.io" | bash
+
+SHELL ["/bin/bash", "-c"] 
+RUN source "/root/.sdkman/bin/sdkman-init.sh" && \
+    sdk install java ${VERSION}-${JAVA_VARIANT} \
+    && sdk install gradle
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ./ && \
     cp just /usr/local/bin/just && \
@@ -16,10 +29,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash 
 
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-    apt update && apt install -y gh unzip;
-
-WORKDIR /app
-RUN npm install -g --registry=${REGISTRY_URL} pnpm
+    apt update && apt install -y gh
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
     unzip -qq -o awscliv2.zip && \
@@ -39,4 +49,4 @@ RUN apt clean \
     && bash /tmp/library-scripts/common_debian.sh "true" "${USERNAME}" "${USER_UID}" "${USER_GID}" "true" "true" "true" \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
-COPY ./resources/node/.envrc /.envrc
+COPY ./resources/java/.envrc /.envrc

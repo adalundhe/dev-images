@@ -20,6 +20,7 @@ INSTALL_OH_MYS=${6:-"true"}
 ADD_NON_FREE_PACKAGES=${7:-"false"}
 SCRIPT_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 MARKER_FILE="/usr/local/etc/vscode-dev-containers/common"
+WORKDIR=${WORKDIR:-"$HOME"}
 
 if [ "$(id -u)" -ne 0 ]; then
     echo -e 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
@@ -112,6 +113,7 @@ if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
         strace \
         manpages \
         manpages-dev \
+        direnv \
         init-system-helpers"
         
     # Needed for adding manpages-posix and manpages-posix-dev which are non-free packages in Debian
@@ -405,5 +407,15 @@ echo -e "\
     EXISTING_NON_ROOT_USER=${EXISTING_NON_ROOT_USER}\n\
     RC_SNIPPET_ALREADY_ADDED=${RC_SNIPPET_ALREADY_ADDED}\n\
     ZSH_ALREADY_INSTALLED=${ZSH_ALREADY_INSTALLED}" > "${MARKER_FILE}"
+
+# Hook Direnv if not already hooked.
+grep -qxF 'eval "$(direnv hook bash)"' $HOME/.zshrc \
+    || echo 'eval "$(direnv hook bash)"' \
+    | tee -a /home/$USERNAME/.bashrc > /dev/null
+
+# Hook Direnv if not already hooked.
+grep -qxF 'eval "$(direnv hook zsh)"' $HOME/.zshrc \
+    || echo 'eval "$(direnv hook zsh)"' \
+    | tee -a /home/$USERNAME/.zshrc > /dev/null
 
 echo "Done!"
