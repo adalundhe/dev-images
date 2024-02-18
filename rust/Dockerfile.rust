@@ -43,4 +43,6 @@ RUN apt clean \
 USER ${USERNAME}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
+USER root
+
 COPY ./resources/rust/.envrc /.envrc
