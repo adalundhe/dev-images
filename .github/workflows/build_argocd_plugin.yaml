@@ -9,14 +9,14 @@ on:
     branches: [ main ]
     paths:
       - .github/workflows/build_argocd_plugin.yml
-      - argocd/plugin/Dockerfile.argocd-plugin
-      - resources/argocd/plugin/*
+      - argocd/plugins/Dockerfile.argocd-plugin
+      - resources/argocd/plugins/*
   pull_request:
     branches: [ main ]
     paths:
       - .github/workflows/build_argocd_plugin.yml
-      - argocd/plugin/Dockerfile.argocd-plugin
-      - resources/argocd/plugin/*
+      - argocd/plugins/Dockerfile.argocd-plugin
+      - resources/argocd/plugins/*
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -46,7 +46,7 @@ jobs:
       with:
         platforms: linux/amd64,linux/arm64
         push: true
-        file: argocd/plugin/Dockerfile.argocd-plugin
+        file: argocd/plugins/Dockerfile.argocd-plugin
         tags: corpheus91/argocd-plugin:python-${{matrix.python_version}}-${{env.IMAGE_OS}}
         build-args: |
           VERSION=${{matrix.python_version}}
