@@ -1,0 +1,61 @@
+ARG VERSION
+
+FROM python:${VERSION}-alpine
+
+ARG USER=default
+ENV HOME=/home/$USER
+
+RUN apk update && \
+    apk add aws-cli \
+    bzip2 \
+    coreutils \
+    curl \
+    gcc \
+    sudo \
+    gnupg \
+    linux-headers \
+    make \
+    musl-dev \
+    patch \
+    tzdata \
+    tar \
+    gpg \
+    git \
+    bash \
+    nano \
+    ca-certificates \ 
+    coreutils \ 
+    gnupg \
+    wget \
+    grep \
+    docker \ 
+    openrc
+
+RUN rc-update add docker boot
+
+RUN pip install uv
+
+RUN if [ ! -s usr/bin/env ] && [ -s bin/env ]; then \
+    mkdir -p usr/bin; \
+    ln -s ../../bin/env usr/bin/; \
+fi
+
+RUN adduser -D $USER \
+        && echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+        && chmod 0440 /etc/sudoers.d/$USER \
+        && chown -R ${USER} ${HOME} \
+        && chmod -R a+rwX,o-w ${HOME}
+
+COPY resources/argocd/plugins/wait_forever.sh /usr/local/bin/wait_forever.sh
+RUN chmod +x /usr/local/bin/wait_forever.sh
+
+RUN mkdir /scripts
+COPY resources/argocd/plugins/kubectl-helm-alpine.sh /scripts/kubectl-helm-alpine.sh
+RUN bash /scripts/kubectl-helm-alpine.sh
+
+ENV PATH="$HOME/.krew/bin:$PATH"
+
+USER $USER
+WORKDIR $HOME
+
+CMD [ "/usr/local/bin/wait_forever.sh" ]

@@ -3,6 +3,7 @@ ARG BASE
 
 FROM node:${VERSION}-${BASE}-slim
 ARG REGISTRY_URL="https://registry.npmjs.org"
+ARG NPM_TOKEN
 ARG USERNAME=vscode
 ARG USER_UID=5000
 ARG USER_GID=$USER_UID
@@ -19,9 +20,12 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | g
     apt update && apt install -y gh unzip;
 
 WORKDIR /app
-RUN npm install -g --registry=${REGISTRY_URL} \
+
+COPY resources/node/install_via_npm.sh /app/install_via_npm.sh
+RUN bash /app/install_via_npm.sh ${REGISTRY_URL} ${NPM_TOKEN} \
     pnpm \
-    turbo
+    turbo \
+    && rm -rf /app/install_via_npm.sh
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
     unzip -qq -o awscliv2.zip && \
