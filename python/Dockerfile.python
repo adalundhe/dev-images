@@ -33,7 +33,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv
 
 RUN pip install --index-url ${INDEX_URL} \
      poetry pytest playwright \
-      pytest-cov pydantic
+      pytest-cov pydantic uv ruff
 
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
