@@ -55,10 +55,10 @@ jobs:
   build_variant_dind:
     strategy:
       matrix:
-        language_and_version: [
-          "python-3.10", 
+        language_and_version: [ 
           "python-3.11", 
-          "python-3.12"
+          "python-3.12",
+          "python-3.13"
         ]
     env:
       REGISTRY: corpheus91/devcontainers
@@ -91,9 +91,9 @@ jobs:
     strategy:
       matrix:
         language_and_version: [
-          "python-3.10", 
           "python-3.11", 
-          "python-3.12"
+          "python-3.12",
+          "python-3.13"
         ]
     env:
       REGISTRY: corpheus91/devcontainers
