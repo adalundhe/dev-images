@@ -90,13 +90,17 @@ jobs:
         language_and_version: [ 
           "python-3.11", 
           "python-3.12",
-          "python-3.13"
+          "python-3.13",
+          "conda-3.11",
+          "conda-3.12",
+          "conda-3.13",
         ]
     env:
       REGISTRY: corpheus91/devcontainers
     runs-on: ubuntu-latest
     needs: [
-      build_core_python
+      build_core_python,
+      build_variant_conda,
     ]
     steps:
       - uses: actions/checkout@master
@@ -125,13 +129,17 @@ jobs:
         language_and_version: [
           "python-3.11", 
           "python-3.12",
-          "python-3.13"
+          "python-3.13",
+          "conda-3.11",
+          "conda-3.12",
+          "conda-3.13",
         ]
     env:
       REGISTRY: corpheus91/devcontainers
     runs-on: ubuntu-latest
     needs: [
-      build_core_python
+      build_core_python,
+      build_variant_conda,
     ]
     steps:
       - uses: actions/checkout@master
