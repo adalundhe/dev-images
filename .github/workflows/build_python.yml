@@ -58,6 +58,9 @@ jobs:
       matrix:
         python_version: ["3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
+    needs: [
+      build_core_python
+    ]
     steps:
     - uses: actions/checkout@master
     - name: Set up QEMU
