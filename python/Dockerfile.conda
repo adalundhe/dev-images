@@ -12,20 +12,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR='/tmp/poetry_cache'
+    POETRY_CACHE_DIR='/tmp/poetry_cache' \
+    PATH="$PATH:/usr/local/miniconda3/bin"
     
 RUN arch=$(uname -m) && \
-    if [ "$arch" = "x86_64" ]; then \
-    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
-    elif [ "$arch" = "aarch64" ]; then \
-    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
-    else \
-    echo "Unsupported architecture: $arch"; \
-    exit 1; \
-    fi && \
+    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${arch}.sh"; \
     wget $MINICONDA_URL -O miniconda.sh && \
     mkdir -p /root/.conda && \
-    bash miniconda.sh -b -p /root/miniconda3 && \
+    bash miniconda.sh -b -p /usr/local/miniconda3 && \
     rm -f miniconda.sh
 
 RUN pip install conda-lock
